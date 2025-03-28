@@ -1,0 +1,27 @@
+stages:
+  json2df:
+    cmd: python src/json2df.py
+    deps:
+    - data/raw
+    - src/json2df.py
+    outs:
+    - data/data.parquet
+  qa_pairs:
+    cmd: python src/qa_pairs.py
+    deps:
+    - data/data.parquet
+    - src/qa_pairs.py
+    outs:
+    - data/data_qa.parquet
+  format_alpaca:
+    cmd: python src/format_alpaca.py
+    deps:
+    - data/data_qa.parquet
+    - src/format_alpaca.py
+    outs:
+    - data/data-formatted.json
+    - data/dataset_info.json
+  factory:
+    cmd: llamafactory-cli webui
+    deps: 
+    - data/data_qa.parquet

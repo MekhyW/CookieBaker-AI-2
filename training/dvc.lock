@@ -1,0 +1,62 @@
+schema: '2.0'
+stages:
+  json2df:
+    cmd: python src/json2df.py
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: 79877878de62d129a4e62930be254d1b.dir
+      size: 3897457233
+      nfiles: 23
+    - path: src/json2df.py
+      hash: md5
+      md5: 0b6dcd6e5d022b0ed63401983bd81663
+      size: 2223
+    outs:
+    - path: data/data.parquet
+      hash: md5
+      md5: b63b1e16fa39053a21e7ecccc99da256
+      size: 440867355
+  qa_pairs:
+    cmd: python src/qa_pairs.py
+    deps:
+    - path: data/data.parquet
+      hash: md5
+      md5: b63b1e16fa39053a21e7ecccc99da256
+      size: 440867355
+    - path: src/qa_pairs.py
+      hash: md5
+      md5: 808a3ec9ad6a152a9149abde2d39b69c
+      size: 2156
+    outs:
+    - path: data/data_qa.parquet
+      hash: md5
+      md5: 482a8de6e0dc933f02cf740e0ed4ac89
+      size: 156363339
+  format_alpaca:
+    cmd: python src/format_alpaca.py
+    deps:
+    - path: data/data_qa.parquet
+      hash: md5
+      md5: 482a8de6e0dc933f02cf740e0ed4ac89
+      size: 156363339
+    - path: src/format_alpaca.py
+      hash: md5
+      md5: 7a5c96f4d079b74ea4430967ffb5b37d
+      size: 2744
+    outs:
+    - path: data/data-formatted.json
+      hash: md5
+      md5: 9da7c430cea1c7d77165bd8c7cb00c0c
+      size: 1725997477
+    - path: data/dataset_info.json
+      hash: md5
+      md5: d9e5a3945da5e94188f8f291ef5077fd
+      size: 249
+  factory:
+    cmd: llamafactory-cli webui
+    deps:
+    - path: data/data_qa.parquet
+      hash: md5
+      md5: 482a8de6e0dc933f02cf740e0ed4ac89
+      size: 156363339
