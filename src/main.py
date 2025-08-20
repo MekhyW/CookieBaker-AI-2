@@ -12,7 +12,6 @@ class MessageContext(BaseModel):
     chat_id: int
     message_text: str
     is_admin: bool
-    # Add other relevant metadata forwarded from the main bot
 
 @app.post("/process_message")
 async def process_message(message_context: MessageContext):
