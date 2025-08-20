@@ -35,5 +35,4 @@ flowchart TD
     B -.-> M & N
     I -.-> M & N
     E1b -.-> P
-    subGraph0 --> n1["Untitled Node"]
 ```
