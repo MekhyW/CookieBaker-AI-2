@@ -1,12 +1,16 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Depends, Security
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 from typing import Optional
 from dotenv import load_dotenv
+import os
 from .agent import build_agent
 
 load_dotenv()
 app = FastAPI()
 agent = build_agent()
+security = HTTPBearer()
+API_KEY = os.getenv("API_KEY")
 
 class MessageContext(BaseModel):
     user_id: int
@@ -16,8 +20,14 @@ class MessageContext(BaseModel):
     is_admin: bool
     sfw: bool
 
+def verify_api_key(credentials: HTTPAuthorizationCredentials = Security(security)):
+    """Verify the API key from the Authorization header"""
+    if credentials.credentials != API_KEY:
+        raise HTTPException(status_code=401, detail="Invalid API key", headers={"WWW-Authenticate": "Bearer"})
+    return credentials.credentials
+
 @app.post("/process_message")
-async def process_message(message_context: MessageContext):
+async def process_message(message_context: MessageContext, _: str = Depends(verify_api_key)):
     initial_state = {
         "user_id": message_context.user_id,
         "chat_id": message_context.chat_id,
