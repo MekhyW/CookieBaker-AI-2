@@ -18,7 +18,6 @@ def build_agent():
     workflow = StateGraph(AgentState)
     workflow.add_node("initial_processing", initial_processing_node)
     workflow.add_node("intent_router", intent_router_node)
-    workflow.add_node("access_control_admin_action", access_control_admin_action_node)
     workflow.add_node("general_conversation", general_conversation_node)
     workflow.add_node("web_search", web_search_node)
     workflow.add_node("function_call", function_call_node)
