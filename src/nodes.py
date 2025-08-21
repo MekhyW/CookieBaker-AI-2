@@ -18,14 +18,6 @@ def intent_router_node(state: AgentState) -> AgentState:
     state["intent"] = "general_conversation_intent" # Placeholder
     return state
 
-def access_control_admin_action_node(state: AgentState) -> AgentState:
-    print("Executing access_control_admin_action_node")
-    # Placeholder for user authentication/role check and routing to admin actions or denial
-    # This should set state["admin_action_status"] to "authorized" or "unauthorized"
-    # For now, let's assume authorized for testing
-    state["admin_action_status"] = "authorized" # Placeholder
-    return state
-
 def general_conversation_node(state: AgentState) -> AgentState:
     print("Executing general_conversation_node")
     # Placeholder for LLM-based general conversation response generation

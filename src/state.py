@@ -6,6 +6,7 @@ class AgentState(TypedDict):
     chat_id: int
     message_text: str
     is_admin: bool
+    sfw: bool
     response: Optional[str]
     tool_output: Optional[Any]
     web_search_results: Optional[str]
@@ -14,5 +15,4 @@ class AgentState(TypedDict):
     user_profile: Optional[Dict[str, Any]]
     group_settings: Optional[Dict[str, Any]]
     intent: Optional[str] # e.g., "admin_intent", "general_conversation_intent"
-    admin_action_status: Optional[str] # e.g., "authorized", "unauthorized"
     requires_web_search: Optional[bool]

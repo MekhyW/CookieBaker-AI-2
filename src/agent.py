@@ -35,18 +35,10 @@ def build_agent():
         "intent_router",
         lambda state: state["intent"],
         {
-            "admin_intent": "access_control_admin_action",
+            "admin_intent": "tool_execution_main_bot_api" if state["is_admin"] else "denial_message_generation",
             "general_conversation_intent": "general_conversation",
             "function_call_intent": "function_call",
             "self_awareness_intent": "self_awareness",
-        },
-    )
-    workflow.add_conditional_edges(
-        "access_control_admin_action",
-        lambda state: "authorized" if state["admin_action_status"] == "authorized" else "unauthorized",
-        {
-            "authorized": "tool_execution_main_bot_api",
-            "unauthorized": "denial_message_generation",
         },
     )
     workflow.add_conditional_edges(

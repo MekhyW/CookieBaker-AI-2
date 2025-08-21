@@ -12,6 +12,7 @@ class MessageContext(BaseModel):
     chat_id: int
     message_text: str
     is_admin: bool
+    sfw: bool
 
 @app.post("/process_message")
 async def process_message(message_context: MessageContext):
@@ -20,6 +21,7 @@ async def process_message(message_context: MessageContext):
         "chat_id": message_context.chat_id,
         "message_text": message_context.message_text,
         "is_admin": message_context.is_admin,
+        "sfw": message_context.sfw,
         "response": None,
         "tool_output": None,
         "web_search_results": None,
@@ -28,7 +30,6 @@ async def process_message(message_context: MessageContext):
         "user_profile": None,
         "group_settings": None,
         "intent": None,
-        "admin_action_status": None,
     }
     final_state = agent.invoke(initial_state)
     return {"response": final_state.get("response")}
