@@ -3,3 +3,7 @@ pydantic
 langgraph
 uvicorn
 python-dotenv
+qdrant-client
+openai
+pillow
+numpy

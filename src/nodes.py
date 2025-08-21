@@ -1,13 +1,29 @@
 from .state import AgentState
+from .database import db
+from .embeddings import embedding_generator
+from datetime import datetime
 
 def initial_processing_node(state: AgentState) -> AgentState:
     print("Executing initial_processing_node")
-    # Placeholder for initial processing, embedding generation, and context retrieval
-    # This node will interact with the vector database and MongoDB backend
-    # It will also set initial values for retrieved_context, user_profile, group_settings
-    state["retrieved_context"] = [] # Example
-    state["user_profile"] = {"name": "TestUser"} # Example
-    state["group_settings"] = {"welcome_message": "Hello!"} # Example
+    if not state.get("message_text") and not state.get("message_photo"):
+        raise ValueError("No message text or photo provided")
+    message_embedding = embedding_generator.generate_combined_embedding(text=state.get("message_text"), image_data=state.get("message_photo"))
+    similar_conversations = db.search_similar_conversations(query_embedding=message_embedding, chat_id=state["chat_id"], user_id=state["user_id"], limit=5)
+    user_profile = db.get_user_profile(state["user_id"])
+    group_settings = db.get_group_settings(state["chat_id"])
+    state["message_embedding"] = message_embedding
+    state["similar_conversations"] = similar_conversations
+    retrieved_context = []
+    for conv in similar_conversations:
+        context_item = {"score": conv["score"], "message_text": conv["payload"].get("message_text"), "message_photo": conv["payload"].get("message_photo"), "user_id": conv["payload"].get("user_id"), "timestamp": conv["payload"].get("timestamp"), "is_admin": conv["payload"].get("is_admin"), "sfw": conv["payload"].get("sfw")}
+        retrieved_context.append(context_item)
+    state["retrieved_context"] = retrieved_context
+    state["user_profile"] = user_profile
+    state["group_settings"] = group_settings
+    metadata = {"timestamp": datetime.now().isoformat(), "is_admin": state["is_admin"], "sfw": state["sfw"]}
+    conversation_id = db.store_conversation(user_id=state["user_id"], chat_id=state["chat_id"], message_text=state.get("message_text"), message_photo=state.get("message_photo"), embedding=message_embedding, metadata=metadata)
+    state["conversation_id"] = conversation_id
+    print(f"Processed message with {len(similar_conversations)} similar conversations found")
     return state
 
 def intent_router_node(state: AgentState) -> AgentState:
